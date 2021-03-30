@@ -63,6 +63,11 @@ class User(AbstractBaseUser):
         return True
 
 
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user_follower")
+    being_followed = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user_being_followed")
+
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
