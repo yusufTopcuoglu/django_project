@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view
 
 from .models import User
 
@@ -30,7 +30,7 @@ def get_users(request):
 
 
 @csrf_exempt
-@api_view(["POST"])
+@require_http_methods(["POST"])
 def sign_up(request):
     username = request.POST.get("username", "")
     password = request.POST.get("password", "")
