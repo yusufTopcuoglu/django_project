@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+    {% if all_users %}
+        <ul>
+            {% for user in all_users %}
+                <li><a href="{% url 'get_user' user.username %}">{{ user.email }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No users are available.</p>
+    {% endif %}
+</body>
+</html>
