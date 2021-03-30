@@ -3,7 +3,12 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from rest_framework import authentication
 from rest_framework.authtoken.models import Token
+
+
+class BearerAuthentication(authentication.TokenAuthentication):
+    keyword = 'Bearer'
 
 
 class UserManager(BaseUserManager):
@@ -60,12 +65,20 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     def has_module_perms(self, app_label):
-        return True
+        return self.is_admin
 
 
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user_follower")
-    being_followed = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user_being_followed")
+    followee = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user_followee")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['follower', 'followee'], name='follow relation constraint')
+        ]
+
+    def __str__(self):
+        return str(self.follower) + " follows " + str(self.followee)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

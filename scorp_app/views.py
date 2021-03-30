@@ -5,8 +5,10 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import permission_classes, api_view
+from rest_framework.permissions import IsAuthenticated
 
-from .models import User
+from .models import User, Follow
 
 
 def index(request):
@@ -39,3 +41,17 @@ def sign_up(request):
     token = Token.objects.get(user=user).key
     response = {'token': token}
     return JsonResponse(response)
+
+
+@csrf_exempt
+@api_view(["POST", "DELETE"])
+@permission_classes([IsAuthenticated])
+def follow(request):
+    follower = Token.objects.get(key=request.auth.key).user
+    if request.method == 'POST':
+        followee_id = request.POST.get("followee")
+        followee = User.objects.get(pk=followee_id)
+        Follow.objects.create(followee=followee, follower=follower)
+    else:
+        pass
+    return HttpResponse()
