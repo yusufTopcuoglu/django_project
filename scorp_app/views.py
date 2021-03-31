@@ -1,7 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import Http404, QueryDict, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -16,13 +14,23 @@ def index(request):
     return HttpResponse("Home page for scorp app")
 
 
-@api_view(['GET'])
-def get_user(request, username):
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def get_or_update_user(request, username):
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
         raise Http404("User does not exists")
-    return HttpResponse(user)
+    else:
+        if request.method == 'PUT':
+            bio = request.POST.get("bio", "")
+            fullname = request.POST.get("fullname", "")
+            profile_photo_link = request.POST.get("profil_photo_link", "")
+            user.bio = bio
+            user.full_name = fullname
+            user.profile_photo = profile_photo_link
+            user.save()
+        return HttpResponse(user)
 
 
 @api_view(['GET'])
