@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -15,6 +16,7 @@ def index(request):
     return HttpResponse("Home page for scorp app")
 
 
+@api_view(['GET'])
 def get_user(request, username):
     try:
         user = User.objects.get(username=username)
@@ -23,6 +25,7 @@ def get_user(request, username):
     return HttpResponse(user)
 
 
+@api_view(['GET'])
 def get_users(request):
     all_users = User.objects.all()
     context = {
@@ -46,12 +49,16 @@ def sign_up(request):
 @csrf_exempt
 @api_view(["POST", "DELETE"])
 @permission_classes([IsAuthenticated])
-def follow(request):
+def follow(request, followee_id):
     follower = Token.objects.get(key=request.auth.key).user
+    followee = User.objects.get(pk=followee_id)
     if request.method == 'POST':
-        followee_id = request.POST.get("followee")
-        followee = User.objects.get(pk=followee_id)
         Follow.objects.create(followee=followee, follower=follower)
     else:
-        pass
-    return HttpResponse()
+        try:
+            follow_entry = Follow.objects.get(followee=followee, follower=follower)
+        except ObjectDoesNotExist:
+            return HttpResponse('Follow relation does not exists')
+        else:
+            follow_entry.delete()
+    return HttpResponse('OK')

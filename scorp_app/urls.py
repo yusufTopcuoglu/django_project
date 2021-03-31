@@ -9,5 +9,5 @@ urlpatterns = [
     path('users', views.get_users, name='get_users'),
     path('sign_up', views.sign_up, name='sign_up'),
     path('login', obtain_auth_token, name="login"),
-    path('follow', views.follow, name="follow"),
+    path('follow/<int:followee_id>', views.follow, name="follow"),
 ]
