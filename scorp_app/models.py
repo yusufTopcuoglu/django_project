@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework import authentication
 from rest_framework.authtoken.models import Token
+import json
 
 
 class BearerAuthentication(authentication.TokenAuthentication):
@@ -79,6 +80,20 @@ class Follow(models.Model):
 
     def __str__(self):
         return str(self.follower) + " follows " + str(self.followee)
+
+
+class Post(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="owner")
+    created = models.DateTimeField(auto_now_add=True)
+    image_link = models.CharField(max_length=200)
+
+    def __str__(self):
+        post = {
+            'owner': str(self.owner),
+            'created': str(self.created),
+            'image': self.image_link
+        }
+        return str(post)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
