@@ -48,10 +48,12 @@ def sign_up(request):
     username = request.POST.get("username", "")
     password = request.POST.get("password", "")
     email = request.POST.get("email", "")
-    user = User.objects.create_user(email, username, password)
-    token = Token.objects.get(user=user).key
-    response = {'token': token}
-    return JsonResponse(response)
+    if username and password and email:
+        user = User.objects.create_user(email, username, password)
+        token = Token.objects.get(user=user).key
+        response = {'token': token}
+        return JsonResponse(response)
+    return HttpResponse('Invalid parameters', status=400)
 
 
 @csrf_exempt
