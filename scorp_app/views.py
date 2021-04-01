@@ -69,7 +69,7 @@ def follow(request, followee_name):
             return HttpResponseNotFound('followee does not exists')
         else:
             if request.method == 'POST':
-                f, created = Follow.objects.get_or_create(followee=followee, follower=follower)
+                _, created = Follow.objects.get_or_create(followee=followee, follower=follower)
                 if not created:
                     return HttpResponse('Follow relation already exists')
             else:
