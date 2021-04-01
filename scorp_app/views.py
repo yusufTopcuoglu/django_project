@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -16,11 +16,11 @@ def index(request):
 
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
-def get_or_update_user(request, username):
+def get_or_update_user(request):
     try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        raise Http404("User does not exists")
+        user = Token.objects.get(key=request.auth.key).user
+    except ObjectDoesNotExist:
+        return HttpResponse('Unauthorized, invalid token', status=401)
     else:
         if request.method == 'PUT':
             bio = request.POST.get("bio", "")
@@ -57,16 +57,48 @@ def sign_up(request):
 @csrf_exempt
 @api_view(["POST", "DELETE"])
 @permission_classes([IsAuthenticated])
-def follow(request, followee_id):
-    follower = Token.objects.get(key=request.auth.key).user
-    followee = User.objects.get(pk=followee_id)
-    if request.method == 'POST':
-        Follow.objects.create(followee=followee, follower=follower)
+def follow(request, followee_name):
+    try:
+        follower = Token.objects.get(key=request.auth.key).user
+    except ObjectDoesNotExist:
+        return HttpResponse('Unauthorized, invalid token', status=401)
     else:
         try:
-            follow_entry = Follow.objects.get(followee=followee, follower=follower)
+            followee = User.objects.get(username=followee_name)
         except ObjectDoesNotExist:
-            return HttpResponse('Follow relation does not exists')
+            return HttpResponseNotFound('followee does not exists')
         else:
-            follow_entry.delete()
-    return HttpResponse('OK')
+            if request.method == 'POST':
+                f, created = Follow.objects.get_or_create(followee=followee, follower=follower)
+                if not created:
+                    return HttpResponse('Follow relation already exists')
+            else:
+                try:
+                    Follow.objects.get(followee=followee, follower=follower).delete()
+                except ObjectDoesNotExist:
+                    return HttpResponse('Follow relation does not exists')
+            return HttpResponse('OK')
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def followers(request):
+    try:
+        the_user = Token.objects.get(key=request.auth.key).user
+    except ObjectDoesNotExist:
+        return HttpResponse('Unauthorized, invalid token', status=401)
+    else:
+        users_followers = User.objects.filter(user_follower__followee=the_user)
+        return HttpResponse(users_followers)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def followees(request):
+    try:
+        the_user = Token.objects.get(key=request.auth.key).user
+    except ObjectDoesNotExist:
+        return HttpResponse('Unauthorized, invalid token', status=401)
+    else:
+        users_followees = User.objects.filter(user_followee__follower=the_user)
+        return HttpResponse(users_followees)
