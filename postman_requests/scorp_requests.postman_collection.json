@@ -1,0 +1,391 @@
+{
+	"info": {
+		"_postman_id": "56250cf6-536a-4b75-9fda-9fda9a34a17f",
+		"name": "scorp_requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8000/scorp/sign_up",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "yusuf",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "yusuf@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/scorp/sign_up",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"sign_up"
+					]
+				},
+				"description": "sign up (POST)"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "yusuf",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/scorp/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"login"
+					]
+				},
+				"description": "login (POST)"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/follow/<followee_name>",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "564dc190edda11df4ee3fb8f3886c6e49c410511",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/scorp/follow/yusuf2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"follow",
+						"yusuf2"
+					]
+				},
+				"description": "follow (POST PRIVATE)"
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/follow/<followee_name>",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "564dc190edda11df4ee3fb8f3886c6e49c410511",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/scorp/follow/yusuf2",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"follow",
+						"yusuf2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "cd8a50dd0b82cc3bfe2fb3c4816f8ab3341e79c9",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "bio",
+							"value": "yusufun biosu",
+							"type": "text"
+						},
+						{
+							"key": "fullname",
+							"value": "yusuf tpcgl",
+							"type": "text"
+						},
+						{
+							"key": "profil_photo_link",
+							"value": "link_to_s3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/scorp/user",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "cd8a50dd0b82cc3bfe2fb3c4816f8ab3341e79c9",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "ahmet",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/scorp/user",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/followers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "b505a1229bcdd1023ce5efd6693530c13c40529e",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/scorp/followers",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"followers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/followees",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "b505a1229bcdd1023ce5efd6693530c13c40529e",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/scorp/followees",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"followees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "aa6061d510139e3f23826f654be06b5b3899066b",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image_link",
+							"value": "yusuf_post_image_link",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/scorp/post",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8000/scorp/post",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "564dc190edda11df4ee3fb8f3886c6e49c410511",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "count",
+							"value": "40",
+							"type": "text"
+						},
+						{
+							"key": "timestamp",
+							"value": "1617448500",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/scorp/post",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"scorp",
+						"post"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
