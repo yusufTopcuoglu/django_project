@@ -3,7 +3,6 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
-from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -38,15 +37,6 @@ def get_or_update_user(request):
             user.save()
         user_serializer = UserSerializer(user)
         return Response(user_serializer.data)
-
-
-@api_view(['GET'])
-def get_users(request):
-    all_users = User.objects.all()
-    context = {
-        'all_users': all_users,
-    }
-    return render(request, 'scorp_app/users.html', context)
 
 
 @csrf_exempt
