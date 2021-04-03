@@ -9,8 +9,10 @@ from django.views.decorators.http import require_http_methods
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .models import User, Follow, Post
+from .serializers import UserSerializer
 
 
 def index(request):
@@ -33,7 +35,8 @@ def get_or_update_user(request):
             user.full_name = fullname
             user.profile_photo = profile_photo_link
             user.save()
-        return HttpResponse(user)
+        user_serializer = UserSerializer(user)
+        return Response(user_serializer.data)
 
 
 @api_view(['GET'])
