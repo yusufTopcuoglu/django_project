@@ -46,9 +46,9 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=254, unique=True)
-    bio = models.CharField('biography', max_length=50)
-    full_name = models.CharField(max_length=50)
-    profile_photo = models.CharField(max_length=50)
+    bio = models.CharField('biography', max_length=50, blank=True)
+    full_name = models.CharField(max_length=50, blank=True)
+    profile_photo = models.CharField(max_length=50,blank=True)
 
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
