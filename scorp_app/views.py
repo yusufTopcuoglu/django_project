@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.utils import timezone
@@ -55,7 +56,10 @@ def sign_up(request):
     password = request.POST.get("password", "")
     email = request.POST.get("email", "")
     if username and password and email:
-        user = User.objects.create_user(email, username, password)
+        try:
+            user = User.objects.create_user(email, username, password)
+        except IntegrityError:
+            return HttpResponse('user already exists', status=400)
         token = Token.objects.get(user=user).key
         response = {'token': token}
         return JsonResponse(response)
