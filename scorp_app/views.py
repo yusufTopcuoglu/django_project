@@ -1,13 +1,14 @@
 from datetime import datetime
 
+from django.contrib.auth import password_validation
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import permission_classes, api_view
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -42,15 +43,19 @@ def get_or_update_user(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def sign_up(request):
+    password = request.POST.get("password", "")
+    try:
+        password_validation.validate_password(password)
+    except ValidationError as e:
+        return JsonResponse(e.messages, safe=False, status=400)
+
     data = {
         'username': request.POST.get("username", ""),
-        'password': request.POST.get("password", ""),
+        'password': password,
         'email': request.POST.get("email", "")
     }
     user_serializer = UserSerializer(data=data)
-    try:
-        user_serializer.is_valid(raise_exception=True)
-    except ValidationError:
+    if not user_serializer.is_valid():
         return JsonResponse(user_serializer.errors, status=400)
     user_serializer.save()
     token = Token.objects.get(user=user_serializer.instance).key
