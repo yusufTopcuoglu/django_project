@@ -74,22 +74,22 @@ def follow(request, followee_name):
         follower = Token.objects.get(key=request.auth.key).user
     except ObjectDoesNotExist:
         return HttpResponse('Unauthorized, invalid token', status=401)
+
+    try:
+        followee = User.objects.get(username=followee_name)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound('followee does not exists')
+
+    if request.method == 'POST':
+        _, created = Follow.objects.get_or_create(followee=followee, follower=follower)
+        if not created:
+            return HttpResponse('Follow relation already exists')
     else:
         try:
-            followee = User.objects.get(username=followee_name)
+            Follow.objects.get(followee=followee, follower=follower).delete()
         except ObjectDoesNotExist:
-            return HttpResponseNotFound('followee does not exists')
-        else:
-            if request.method == 'POST':
-                _, created = Follow.objects.get_or_create(followee=followee, follower=follower)
-                if not created:
-                    return HttpResponse('Follow relation already exists')
-            else:
-                try:
-                    Follow.objects.get(followee=followee, follower=follower).delete()
-                except ObjectDoesNotExist:
-                    return HttpResponse('Follow relation does not exists')
-            return HttpResponse('OK')
+            return HttpResponse('Follow relation does not exists')
+    return HttpResponse('OK')
 
 
 @api_view(["GET"])
@@ -99,9 +99,10 @@ def followers(request):
         the_user = Token.objects.get(key=request.auth.key).user
     except ObjectDoesNotExist:
         return HttpResponse('Unauthorized, invalid token', status=401)
-    else:
-        users_followers = User.objects.filter(user_follower__followee=the_user)
-        return HttpResponse(users_followers)
+
+    users_followers = User.objects.filter(user_follower__followee=the_user)
+    user_serializers = UserSerializer(users_followers, many=True)
+    return Response(user_serializers.data)
 
 
 @api_view(["GET"])
@@ -111,9 +112,9 @@ def followees(request):
         the_user = Token.objects.get(key=request.auth.key).user
     except ObjectDoesNotExist:
         return HttpResponse('Unauthorized, invalid token', status=401)
-    else:
-        users_followees = User.objects.filter(user_followee__follower=the_user)
-        return HttpResponse(users_followees)
+    users_followees = User.objects.filter(user_followee__follower=the_user)
+    user_serializers = UserSerializer(users_followees, many=True)
+    return Response(user_serializers.data)
 
 
 @api_view(["GET", "POST"])
