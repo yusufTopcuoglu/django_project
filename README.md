@@ -16,6 +16,8 @@ This project is the backend server of a social media app with following features
  - You can go to http://localhost:8000/scorp/ addres from your browser or you can use Postman to send requests
 
 ## Pre-requests
+ - pip3 needs to be installed
+ - run "pip3 install -r requirements.txt" on the project folder  
  - Mysql server needs to be running on the localhost. You can change db settings from the
 scorp_project/settings.py file.
 
