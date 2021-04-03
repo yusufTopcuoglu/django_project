@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import User, Follow, Post
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PostSerializer
 
 
 def index(request):
@@ -124,26 +124,27 @@ def post(request):
         the_user = Token.objects.get(key=request.auth.key).user
     except ObjectDoesNotExist:
         return HttpResponse('Unauthorized, invalid token', status=401)
+
+    if request.method == 'POST':
+        image_link = request.POST.get("image_link", "")
+        if image_link:
+            new_post = Post.objects.create(owner=the_user, image_link=image_link)
+            post_serializer = PostSerializer(new_post)
+            return Response(post_serializer.data)
+        return HttpResponse('Invalid parameters, provide image link', status=400)
     else:
-        if request.method == 'POST':
-            image_link = request.POST.get("image_link", "")
-            if image_link:
-                new_post = Post.objects.create(owner=the_user, image_link=image_link)
-                return HttpResponse(new_post)
-            return HttpResponse('Invalid parameters', status=400)
-        else:
-            try:
-                timestamp = float(request.POST.get("timestamp", timezone.now().timestamp()))
-                print(type(timestamp))
-                formatted_time = timezone.make_aware(datetime.fromtimestamp(timestamp))
-            except TypeError:
-                return HttpResponse("invalid parameters", status=400)
+        try:
+            timestamp = float(request.POST.get("timestamp", timezone.now().timestamp()))
+            formatted_time = timezone.make_aware(datetime.fromtimestamp(timestamp))
+        except TypeError:
+            return HttpResponse("invalid parameters, can not get timestamp", status=400)
 
-            try:
-                count = int(request.POST.get("count", 10))
-            except ValueError:
-                return HttpResponse("invalid parameters", status=400)
-            news_feed_posts = Post.objects.filter(owner__user_followee__follower=the_user).filter(
-                created_at__lt=formatted_time)[:count]
+        try:
+            count = int(request.POST.get("count", 10))
+        except ValueError:
+            return HttpResponse("invalid parameters, can not get count", status=400)
+        news_feed_posts = Post.objects.filter(owner__user_followee__follower=the_user).filter(
+            created_at__lt=formatted_time)[:count]
 
-            return JsonResponse(list(news_feed_posts.values()), safe=False)
+        post_serializer = PostSerializer(news_feed_posts, many=True)
+        return Response(post_serializer.data)
