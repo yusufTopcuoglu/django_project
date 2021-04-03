@@ -6,7 +6,7 @@ from scorp_app.models import User, Post
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'bio', 'full_name', 'profile_photo']
+        fields = ['username', 'email', 'bio', 'full_name', 'profile_photo', 'password']
 
 
 class PostSerializer(serializers.ModelSerializer):
