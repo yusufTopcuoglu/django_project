@@ -88,6 +88,11 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     image_link = models.CharField(max_length=200)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['owner', 'created'])
+        ]
+
     def __str__(self):
         post = {
             'owner': str(self.owner),
