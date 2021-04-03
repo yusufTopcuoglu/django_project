@@ -1,7 +1,7 @@
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
 
 from . import views
-from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -12,4 +12,5 @@ urlpatterns = [
     path('follow/<str:followee_name>', views.follow, name="follow"),
     path('followers', views.followers, name="followers"),
     path('followees', views.followees, name="followees"),
+    path('post', views.post, name="post"),
 ]

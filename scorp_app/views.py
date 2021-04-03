@@ -1,13 +1,16 @@
+from datetime import datetime
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.shortcuts import render
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 
-from .models import User, Follow
+from .models import User, Follow, Post
 
 
 def index(request):
@@ -104,3 +107,35 @@ def followees(request):
     else:
         users_followees = User.objects.filter(user_followee__follower=the_user)
         return HttpResponse(users_followees)
+
+
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def post(request):
+    try:
+        the_user = Token.objects.get(key=request.auth.key).user
+    except ObjectDoesNotExist:
+        return HttpResponse('Unauthorized, invalid token', status=401)
+    else:
+        if request.method == 'POST':
+            image_link = request.POST.get("image_link", "")
+            if image_link:
+                new_post = Post.objects.create(owner=the_user, image_link=image_link)
+                return HttpResponse(new_post)
+            return HttpResponse('Invalid parameters', status=400)
+        else:
+            try:
+                timestamp = float(request.POST.get("timestamp", timezone.now().timestamp()))
+                print(type(timestamp))
+                formatted_time = timezone.make_aware(datetime.fromtimestamp(timestamp))
+            except TypeError:
+                return HttpResponse("invalid parameters", status=400)
+
+            try:
+                count = int(request.POST.get("count", 10))
+            except ValueError:
+                return HttpResponse("invalid parameters", status=400)
+            news_feed_posts = Post.objects.filter(owner__user_followee__follower=the_user).filter(
+                created__lt=formatted_time)[:count]
+
+            return JsonResponse(list(news_feed_posts.values()), safe=False)
