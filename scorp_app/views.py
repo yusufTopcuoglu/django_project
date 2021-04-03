@@ -136,6 +136,6 @@ def post(request):
             except ValueError:
                 return HttpResponse("invalid parameters", status=400)
             news_feed_posts = Post.objects.filter(owner__user_followee__follower=the_user).filter(
-                created__lt=formatted_time)[:count]
+                created_at__lt=formatted_time)[:count]
 
             return JsonResponse(list(news_feed_posts.values()), safe=False)

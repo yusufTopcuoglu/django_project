@@ -85,18 +85,18 @@ class Follow(models.Model):
 
 class Post(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="owner")
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     image_link = models.CharField(max_length=200)
 
     class Meta:
         indexes = [
-            models.Index(fields=['owner', 'created'])
+            models.Index(fields=['owner', 'created_at'])
         ]
 
     def __str__(self):
         post = {
             'owner': str(self.owner),
-            'created': str(self.created),
+            'created_at': str(self.created_at),
             'image': self.image_link
         }
         return json.dumps(post)
