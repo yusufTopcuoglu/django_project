@@ -11,12 +11,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     # this maybe a HyperlinkedRelatedField to navigate users profile on click
-    owner = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='username'
-    )
+    owner = UserSerializer()
 
     class Meta:
         model = Post
         fields = ['owner', 'created_at', 'image_link']
-        depth = 1
