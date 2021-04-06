@@ -17,6 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data["password"] = make_password(validated_data["password"])
         return super().update(instance, validated_data)
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation.pop("password", None)
+        return representation
+
 
 class PostSerializer(serializers.ModelSerializer):
     # this maybe a HyperlinkedRelatedField to navigate users profile on click
