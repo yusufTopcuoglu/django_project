@@ -1,4 +1,4 @@
-"""scorp_project URL Configuration
+"""django_project URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -17,6 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('scorp/', include('scorp_app.urls')),
+    path('scorp/', include('social_media_app.urls')),
     path('admin/', admin.site.urls),
 ]

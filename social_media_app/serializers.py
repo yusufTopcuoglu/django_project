@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from scorp_app.models import User, Post
+from social_media_app.models import User, Post
 
 
 class UserSerializer(serializers.ModelSerializer):
