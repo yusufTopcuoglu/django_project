@@ -1,8 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth import password_validation
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -43,15 +41,9 @@ def get_or_update_user(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def sign_up(request):
-    password = request.POST.get("password", "")
-    try:
-        password_validation.validate_password(password)
-    except ValidationError as e:
-        return JsonResponse(e.messages, safe=False, status=400)
-
     data = {
         'username': request.POST.get("username", ""),
-        'password': password,
+        'password': request.POST.get("password", ""),
         'email': request.POST.get("email", "")
     }
     user_serializer = UserSerializer(data=data)

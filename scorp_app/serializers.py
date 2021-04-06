@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from scorp_app.models import User, Post
@@ -6,7 +7,15 @@ from scorp_app.models import User, Post
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'bio', 'full_name', 'profile_photo']
+        fields = ['username', 'email', 'bio', 'full_name', 'profile_photo', "password"]
+
+    def create(self, validated_data):
+        validated_data["password"] = make_password(validated_data["password"])
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data["password"] = make_password(validated_data["password"])
+        return super().update(instance, validated_data)
 
 
 class PostSerializer(serializers.ModelSerializer):
