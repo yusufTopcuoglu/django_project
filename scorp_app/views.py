@@ -141,7 +141,7 @@ def post(request):
         except ValueError:
             return HttpResponse("invalid parameters, can not get count", status=400)
         news_feed_posts = Post.objects.filter(owner__user_followee__follower=the_user).filter(
-            created_at__lt=formatted_time)[:count]
+            created_at__lt=formatted_time).order_by('-created_at')[:count]
 
         post_serializer = PostSerializer(news_feed_posts, many=True)
         return Response(post_serializer.data)
